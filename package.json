@@ -1,0 +1,27 @@
+{
+  "name": "chessisveryhard",
+  "version": "1.0.0",
+  "description": "A JavaScript chessboard which is lightweight, ES6 module based, responsive, SVG rendered and **without dependencies**.",
+  "main": "./server.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "stockfish": "^15.0.0",
+    "teevi": "^2.1.11"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adityaj2003/chessisveryhard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adityaj2003/chessisveryhard/issues"
+  },
+  "homepage": "https://github.com/adityaj2003/chessisveryhard#readme"
+}
