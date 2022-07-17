@@ -1,5 +1,5 @@
-var engine = new Worker('../stockfish.js/src/stockfish.js');
-var evaler = new Worker('../stockfish.js/src/stockfish.js');
+var engine = typeof STOCKFISH === "function" ? STOCKFISH() : new Worker('../stockfish.js/src/stockfish.js');
+var evaler = typeof STOCKFISH === "function" ? STOCKFISH() : new Worker('../stockfish.js/src/stockfish.js');
 
 var prevLine = null;
 
