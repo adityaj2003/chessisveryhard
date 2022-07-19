@@ -59,7 +59,7 @@
     }
     </style>
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
 <div class="header">
   <a href="https://github.com/adityaj2003/cm-chessboard" class="logo">ChessIsVeryHard</a>
   <div class="header-right">
@@ -76,16 +76,16 @@
 <div id="joinFormDiv" style="display: block;border:solid; width:40%;margin:20px;">
                 <h1 style="text-align: center; margin: 10px; font-size: 35px;color:#EA4717;">START GAME</h1>
                 <div style="text-align:center;">
-                    <input class="formInput" type="text" placeholder="Name" style="padding: 10px;">
+                    <input id="playerName" type="text" placeholder="Name" style="padding: 10px;">
                 </div>
                 <div style="text-align:center;">
-                    <input class="formInput" type="text" placeholder="Room" style="padding: 10px;">
+                    <input id="roomNumber" type="text" placeholder="Room" style="padding: 10px;">
                 </div>
                
                     <br><br>
             
                 <div style="text-align:center;">
-                    <button class="game ui black button " id="joinButton">JOIN</button>
+                    <button id="joinButton">JOIN</button>
                 </div>
                 <div style="text-align:center;">
                     <p id="message"></p>
@@ -95,18 +95,30 @@
 </div>
 
 <div class="board" id="board"></div>
+
+
+<div id="opponent"> </div> <br>
+<div id="state">Join Game</div>
 <script type="module">
     var socket = io();
     var roomId;
+    var color;
     var play = true;
+    var board;
     
-    var connect = function(){
-        roomId = room.value;
+    var joinFormDiv = document.getElementById("joinFormDiv");
+    var playerName = document.getElementById("playerName");
+    var roomNumber = document.getElementById("roomNumber");
+    var state = document.getElementById('state');
+    
+    document.getElementById ("joinButton").addEventListener ("click", connect, false);
+    
+    function connect() {
+        roomId = roomNumber.value;
         if (roomId !== "" && parseInt(roomId) <= 100) {
-            room.remove();
-            roomNumber.innerHTML = "Room Number " + roomId;
-            button.remove();
-            socket.emit('joined', roomId);
+            joinFormDiv.remove();
+            
+            socket.emit('joined', {roomID: roomId, playerName: playerName.value});
         }
     }
 
@@ -122,28 +134,146 @@
         }
         // console.log(msg)
     });
+                        
+    socket.on('gameOver', function(msg) {
+                if (msg == roomId) {
+                    if (chess.in_stalemate()) {
+                        setTimeout(function() {
+                                alert("Game ended in draw by stalemate");
+                            }, 200);
+                    }
+                    else if (chess.in_threefold_repetition()) {
+                        setTimeout(function() {
+                                alert("Game ended in draw");
+                            }, 200);
+                    }
+                    else if (chess.in_draw()) {
+                        setTimeout(function() {
+                                alert("Game ended in draw");
+                            }, 200);
+                    }
+
+                    else if (chess.game_over()) {
+                        setTimeout(function() {
+                                alert("Game ended. You won!");
+                            }, 200);
+                        }
+                }
+            })
 
     socket.on('move', function (msg) {
+        console.log("moveReceived");
         if (msg.room == roomId) {
-            game.move(msg.move);
-            board.position(game.fen());
+            chess.move(msg.move);
+            board.setPosition(msg.fen)
+            if (color == 'white') {
+                board.enableMoveInput(inputHandler, COLOR.white);
+                }
+            else {
+                board.enableMoveInput(inputHandler, COLOR.black);
+                }
             console.log("moved")
+            
+            if (chess.in_stalemate()) {
+                setTimeout(function() {
+                        alert("Game ended in draw by stalemate");
+                    }, 200);
+                socket.emit('gameOver',roomId);
+            }
+            else if (chess.in_threefold_repetition()) {
+                setTimeout(function() {
+                        alert("Game ended in draw");
+                    }, 200);
+                socket.emit('gameOver',roomId);
+            }
+            else if (chess.in_draw()) {
+                setTimeout(function() {
+                        alert("Game ended in draw");
+                    }, 200);
+                socket.emit('gameOver',roomId);
+            }
+
+            else if (chess.game_over()) {
+                setTimeout(function() {
+                        alert("Game ended. You lost!");
+                    }, 200);
+                socket.emit('gameOver',roomId);
+                }
         }
+    });
+    
+    socket.on('player', (msg) => {
+        if (msg.roomId == roomId) {
+        color = msg.color;
+        console.log(color);
+        document.getElementById('opponent').innerHTML = 'Opponent: ' + msg.playerName;
+        
+        var players = msg.players;
+
+        if(players == 2){
+            play = false;
+            socket.emit('play', msg.roomId);
+            state.innerHTML = "Game in Progress"
+        }
+        else
+            state.innerHTML = "Waiting for Second player";
+
+        if (color === 'white') {
+            var cfg = {
+                orientation: COLOR.white,
+                position: chess.fen(),
+                style: {moveFromMarker: undefined, moveToMarker: undefined, cssClass: "chessboard-js"},
+                sprite: {url: "../assets/images/chessboard-sprite.svg"}
+                
+            };
+        }
+        else {
+        var cfg = {
+            orientation: COLOR.black,
+            position: chess.fen(),
+            style: {moveFromMarker: undefined, moveToMarker: undefined, cssClass: "chessboard-js"},
+            sprite: {url: "../assets/images/chessboard-sprite.svg"}
+            
+        };
+        }
+        board = new Chessboard(document.getElementById("board"), cfg);
+        window.board = board;
+        if (color === 'white') {
+            board.enableMoveInput(inputHandler, COLOR.white);
+        }
+         }
     });
     
     
     import {INPUT_EVENT_TYPE, COLOR, Chessboard, MARKER_TYPE} from "../src/cm-chessboard/Chessboard.js"
     var chess = new Chess();
     window.chess = chess;
-    const board = new Chessboard(document.getElementById("board"), {
-        position: chess.fen(),
-        // animationDuration: 2000,
-        sprite: {url: "../assets/images/chessboard-sprite.svg"},
-        style: {moveFromMarker: undefined, moveToMarker: undefined,
-            cssClass: "chessboard-js"}, // disable standard markers
-        orientation: COLOR.white
-    })
-    window.board = board;
+    
+    
+    function inputHandler(event) {
+        console.log("event", event)
+        event.chessboard.removeMarkers(undefined, MARKER_TYPE.dot)
+        event.chessboard.removeMarkers(undefined, MARKER_TYPE.square)
+        if (event.type === INPUT_EVENT_TYPE.moveStart) {
+            const moves = chess.moves({square: event.square, verbose: true});
+            event.chessboard.addMarker(event.square, MARKER_TYPE.square)
+            for (const move of moves) { // draw dots on possible moves
+                event.chessboard.addMarker(move.to, MARKER_TYPE.dot)
+            }
+            return moves.length > 0
+        } else if (event.type === INPUT_EVENT_TYPE.moveDone) {
+            const move = {from: event.squareFrom, to: event.squareTo}
+            const result = chess.move(move)
+            if (result) {
+                event.chessboard.disableMoveInput();
+                console.log("moveSent");
+                socket.emit('move', {move:move,fen:chess.fen(), room: roomId});
+            } else {
+                console.warn("invalid move", move)
+            }
+            return result
+        }
+    }
     
 </script>
 </body>

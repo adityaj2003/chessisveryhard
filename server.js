@@ -18,13 +18,16 @@ let server = http.createServer(app);
 let io = socketIO(server);
 
 app.use(express.static(__dirname + '/')); //__dir and not _dir
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/examples/index.html');
+});
+
 const PORT = process.env.PORT || 8080;
-app.listen(PORT);
-console.log('server on' + PORT);
 
 var games = Array(100);
 for (let i = 0; i < 100; i++) {
-    games[i] = {players: 0 , roomNumber:0};
+    games[i] = {players: 0 , roomNumber:0,pid: [0 , 0]};
 }
 
 var playerId = Math.floor((Math.random() * 100) + 1)
@@ -37,8 +40,11 @@ io.on('connection', function (socket) {
 
     console.log(playerId + ' connected');
 
-    socket.on('joined', function (roomId) {
+    socket.on('joined', function (msg) {
         // games[roomId] = {}
+        const roomId = msg.roomID;
+        const playerName = msg.playerName;
+        
         if (games[roomId].players < 2) {
             games[roomId].players++;
             games[roomId].pid[games[roomId].players - 1] = playerId;
@@ -52,15 +58,19 @@ io.on('connection', function (socket) {
         players = games[roomId].players
         
 
-        if (players % 2 == 0) color = 'black';
-        else color = 'white';
+        if (players == 1) {
+            color = 'black';}
+        else {color = 'white';}
 
-        socket.emit('player', { playerId, players, color, roomId })
+        socket.emit('player', { playerId, players, color, roomId, playerName})
         // players--;
 
         
     });
 
+    socket.on('gameOver', function(msg) {
+        socket.broadcast.emit('move', msg);
+    });
     socket.on('move', function (msg) {
         socket.broadcast.emit('move', msg);
         // console.log(msg);
@@ -82,3 +92,5 @@ io.on('connection', function (socket) {
 
     
 });
+server.listen(PORT);
+console.log('server on' + PORT);
