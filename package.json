@@ -9,6 +9,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "socket.io": "^4.5.1",
     "stockfish": "^15.0.0",
     "teevi": "^2.1.11"
   },

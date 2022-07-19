@@ -1,4 +1,9 @@
-
+<head>
+    
+    <link rel="stylesheet" href="styles/examples.css"/>
+    <link rel="stylesheet" href="../assets/styles/cm-chessboard.css"/>
+    <script src="../chess.js"></script>
+    </head>
 <style>
     body {
         background-color: #222;
@@ -54,6 +59,7 @@
     }
     </style>
 <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 <div class="header">
   <a href="https://github.com/adityaj2003/cm-chessboard" class="logo">ChessIsVeryHard</a>
   <div class="header-right">
@@ -68,7 +74,6 @@
 
 <div style="align-content: center;">
 <div id="joinFormDiv" style="display: block;border:solid; width:40%;margin:20px;">
-            <form id="joinForm">
                 <h1 style="text-align: center; margin: 10px; font-size: 35px;color:#EA4717;">START GAME</h1>
                 <div style="text-align:center;">
                     <input class="formInput" type="text" placeholder="Name" style="padding: 10px;">
@@ -85,11 +90,60 @@
                 <div style="text-align:center;">
                     <p id="message"></p>
                 </div>
-            </form>
     
 </div>
 </div>
-<script>
+
+<div class="board" id="board"></div>
+<script type="module">
+    var socket = io();
+    var roomId;
+    var play = true;
+    
+    var connect = function(){
+        roomId = room.value;
+        if (roomId !== "" && parseInt(roomId) <= 100) {
+            room.remove();
+            roomNumber.innerHTML = "Room Number " + roomId;
+            button.remove();
+            socket.emit('joined', roomId);
+        }
+    }
+
+    socket.on('full', function (msg) {
+        if(roomId == msg)
+            window.location.assign(window.location.href+ 'full.html');
+    });
+
+    socket.on('play', function (msg) {
+        if (msg == roomId) {
+            play = false;
+            state.innerHTML = "Game in progress"
+        }
+        // console.log(msg)
+    });
+
+    socket.on('move', function (msg) {
+        if (msg.room == roomId) {
+            game.move(msg.move);
+            board.position(game.fen());
+            console.log("moved")
+        }
+    });
+    
+    
+    import {INPUT_EVENT_TYPE, COLOR, Chessboard, MARKER_TYPE} from "../src/cm-chessboard/Chessboard.js"
+    var chess = new Chess();
+    window.chess = chess;
+    const board = new Chessboard(document.getElementById("board"), {
+        position: chess.fen(),
+        // animationDuration: 2000,
+        sprite: {url: "../assets/images/chessboard-sprite.svg"},
+        style: {moveFromMarker: undefined, moveToMarker: undefined,
+            cssClass: "chessboard-js"}, // disable standard markers
+        orientation: COLOR.white
+    })
+    window.board = board;
     
 </script>
 </body>
