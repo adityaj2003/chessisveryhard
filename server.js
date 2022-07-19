@@ -69,7 +69,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('gameOver', function(msg) {
-        socket.broadcast.emit('move', msg);
+        socket.broadcast.emit('gameOver', msg);
     });
     socket.on('move', function (msg) {
         socket.broadcast.emit('move', msg);

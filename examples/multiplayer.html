@@ -159,7 +159,7 @@
                             }, 200);
                         }
                 }
-            })
+            });
 
     socket.on('move', function (msg) {
         console.log("moveReceived");
@@ -198,7 +198,7 @@
                         alert("Game ended. You lost!");
                     }, 200);
                 socket.emit('gameOver',roomId);
-                }
+            }
         }
     });
     
