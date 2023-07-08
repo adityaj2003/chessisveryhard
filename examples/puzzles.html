@@ -9,22 +9,14 @@
     <script src="../chess.js"></script>
 </head>
 <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
     <div id="header"></div>
     <br><br>
-    <div id="board" style="width: 50%;height: 50%;"></div>
+    <div id="root"></div>
     <script src="../dist/puzzles.bundle.js"></script>
     <script type="module">
-        import {INPUT_EVENT_TYPE, COLOR, Chessboard, MARKER_TYPE} from "../src/cm-chessboard/Chessboard.js";
-        var chess = new Chess();
-        const board = new Chessboard(document.getElementById("board"), {
-        position: chess.fen(),
-        sprite: {url: "../assets/images/chessboard-sprite.svg"},
-        style: {moveFromMarker: undefined, moveToMarker: undefined,
-            cssClass: "chessboard-js"}, // disable standard markers
-        orientation: COLOR.white
-    })
-    window.board = board;
-    board.enableMoveInput(inputHandler, COLOR.white)
+    
+
     </script>
 </body>
 </html>

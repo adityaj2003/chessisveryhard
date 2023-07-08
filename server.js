@@ -8,6 +8,9 @@ const mime = require('mime');
 const { Pool } = require('pg');
 
 const pool = new Pool({
+  host: 'database-1.cbxymylid2b5.us-west-2.rds.amazonaws.com',
+  user: 'postgres',
+  password: 'g8AfiS9LHXLnoQiAnHUS',
   database: 'postgres',
   PORT: 5432,
 });

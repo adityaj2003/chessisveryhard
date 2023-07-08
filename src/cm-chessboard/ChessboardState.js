@@ -135,4 +135,12 @@ export class ChessboardState {
         return file + rank
     }
 
+    getWhichInputEnabled() {
+        if (this.inputWhiteEnabled === true) {
+            return "white"
+        }
+        else {
+            return "black"
+        }
+    }
 }

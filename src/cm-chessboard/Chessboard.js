@@ -276,4 +276,7 @@ export class Chessboard {
         this.view.setCursor()
     }
 
+    getWhichInputEnabled() {
+        return this.state.getWhichInputEnabled()
+    }
 }
