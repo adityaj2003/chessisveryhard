@@ -12,10 +12,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
     <div id="header"></div>
     <br><br>
-    <div id="root"></div>
+    <div id="root"> </div>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+          <h3>Incorrect Move</h3>
+          <p>Please try again.</p>
+          <button onclick="closePopup()">Close</button>
+        </div>
+      </div>
+      <div id="popupCorrect" class="popup" >
+        <div class="popup-content">
+          <h3>Puzzle Solved!</h3>
+          <p>Loading next Puzzle..</p>
+          <button onclick="closePopupCorrect()">Close</button>
+        </div>
+      </div>
     <script src="../dist/puzzles.bundle.js"></script>
-    <script type="module">
-    
+    <script>
+    function closePopup() {
+        const popup = document.getElementById('popup');
+        popup.style.display = 'none';
+        }
+
+        function closePopupCorrect() {
+        const popup = document.getElementById('popupCorrect');
+        popup.style.display = 'none';
+        }
 
     </script>
 </body>

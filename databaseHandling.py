@@ -4,8 +4,8 @@
 # conn = psycopg2.connect(
 #     database="postgres", 
 #     user="postgres", 
-#     password="placeholder", 
-#     host="placeholder", 
+#     password="g8AfiS9LHXLnoQiAnHUS", 
+#     host="database-1.cbxymylid2b5.us-west-2.rds.amazonaws.com", 
 #     port="5432"
 # )
 

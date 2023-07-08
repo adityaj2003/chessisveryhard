@@ -7,6 +7,32 @@ import {parse} from 'pgn-parser';
 import Header from './LoginComponent.js';
 import e from 'cors';
 
+
+function showPopupIncorrect() {
+  const popup = document.getElementById('popup');
+  popup.style.display = 'block';
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      popup.style.display = 'none';
+      resolve();
+    }, 2000);
+  });
+}
+
+function showPopupCorrect() {
+  const popup = document.getElementById('popupCorrect');
+  popup.style.display = 'block';
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      popup.style.display = 'none';
+      resolve();
+    }, 2000);
+  });
+}
+
+
+
 const PuzzlesComponent = () => {
   let chess = new Chess();
   const socket = io();
@@ -63,8 +89,14 @@ const PuzzlesComponent = () => {
         console.log("moveArray", moveArray[moveInt]);
         if (result["san"] === moveArray[moveInt]) {
             event.chessboard.setPosition(chess.fen());
+            setTimeout(() => {
+            }, 500);
             moveInt++;
             if (moveInt === moveArray.length) {
+              showPopupCorrect().then(() => {
+              });
+              setTimeout(() => {
+              }, 2000);
               moveInt = 0;
               getPuzzle();
           }
@@ -74,15 +106,24 @@ const PuzzlesComponent = () => {
             event.chessboard.setPosition(chess.fen());
             event.chessboard.enableMoveInput(inputHandler, moveColor);
             if (moveInt === moveArray.length) {
+              setTimeout(() => {
+              }, 2000);
+              showPopupCorrect().then(() => {
+              });
               moveInt = 0;
               getPuzzle();
             }
           }
         } else {
+          showPopupIncorrect().then(() => {
+            // Code to update the main page after the popup is hidden
+            console.log('Popup closed');
+          });
             chess.load(fen);
             event.chessboard.setPosition(fen);
-            event.chessboard.enableMoveInput(inputHandler, moveColor);
+            event.chessboard.view.redraw();
             moveInt = 0;
+            event.chessboard.enableMoveInput(inputHandler, moveColor);
         }
         return result
     }
