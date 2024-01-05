@@ -48,31 +48,26 @@ const PuzzlesComponent = () => {
                 const puzzleId = puzzleData.puzzleId;
                 fen = puzzleData.fen;
                 const puzzlePGN = puzzleData.moves;
-                console.log(puzzlePGN);
                 let puzzleMoves;
                 let cleanedPGN = puzzlePGN.replace(/\d+\./g, '');
                 if (cleanedPGN.startsWith('..')) {
                   console.log('black to move');
+                  board.setOrientation(COLOR.black);
                   moveColor = COLOR.black;
                 }
                 cleanedPGN = cleanedPGN.replace(/\./g, '');
                 moveArray = cleanedPGN.split(' ');
                 moveArray = moveArray.filter((item) => item !== '')
 
-                console.log(moveArray);
                 const event = puzzleData.event;
                 const white = puzzleData.white;
                 const black = puzzleData.black;
                 board.setPosition(fen);
                 chess.load(fen);
-                console.log(fen);
-                console.log(chess.turn());
-                console.log(chess.fen());
                 board.enableMoveInput(inputHandler , moveColor);
             });
         }
-  function inputHandler(event) {
-    console.log("event", event)
+  async function inputHandler(event) {
     event.chessboard.removeMarkers(undefined, MARKER_TYPE.dot)
     event.chessboard.removeMarkers(undefined, MARKER_TYPE.square)
     if (event.type === INPUT_EVENT_TYPE.moveStart) {
@@ -85,47 +80,47 @@ const PuzzlesComponent = () => {
     } else if (event.type === INPUT_EVENT_TYPE.moveDone) {
         const move = {from: event.squareFrom, to: event.squareTo}
         const result = chess.move(move)
-        console.log("result", result["san"]);
-        console.log("moveArray", moveArray[moveInt]);
-        if (result["san"] === moveArray[moveInt]) {
-            event.chessboard.setPosition(chess.fen());
-            setTimeout(() => {
-            }, 500);
-            moveInt++;
-            if (moveInt === moveArray.length) {
-              showPopupCorrect().then(() => {
-              });
-              setTimeout(() => {
-              }, 2000);
-              moveInt = 0;
-              getPuzzle();
-          }
-          else {
-            chess.move(moveArray[moveInt])
-            moveInt++;
-            event.chessboard.setPosition(chess.fen());
-            event.chessboard.enableMoveInput(inputHandler, moveColor);
-            if (moveInt === moveArray.length) {
-              setTimeout(() => {
-              }, 2000);
-              showPopupCorrect().then(() => {
-              });
-              moveInt = 0;
-              getPuzzle();
+        if (result !== null) {
+          if (result["san"] === moveArray[moveInt]) {
+              event.chessboard.setPosition(chess.fen());
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              moveInt++;
+              if (moveInt === moveArray.length) {
+                showPopupCorrect().then(() => {
+                });
+                moveInt = 0;
+                getPuzzle();
             }
-          }
-        } else {
-          showPopupIncorrect().then(() => {
-            // Code to update the main page after the popup is hidden
-            console.log('Popup closed');
-          });
+            else {
+              chess.move(moveArray[moveInt])
+              moveInt++;
+              event.chessboard.setPosition(chess.fen());
+              event.chessboard.enableMoveInput(inputHandler, moveColor);
+              if (moveInt === moveArray.length) {
+                showPopupCorrect().then(() => {
+                });
+                moveInt = 0;
+                getPuzzle();
+              }
+            }
+          } else {
+            showPopupIncorrect().then(() => {
+            });
+            await new Promise(resolve => setTimeout(resolve, 1000));
             chess.load(fen);
             event.chessboard.setPosition(fen);
             event.chessboard.view.redraw();
             moveInt = 0;
             event.chessboard.enableMoveInput(inputHandler, moveColor);
-        }
+          }
+      }
+      else {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        event.chessboard.setPosition(chess.fen());
+        console.warn("invalid move", move);
+      }
         return result
+
     }
 }
   useEffect(() => {
@@ -142,7 +137,6 @@ const PuzzlesComponent = () => {
     board.enableMoveInput(inputHandler , COLOR.white);
     getPuzzle();
     return () => {
-      // Cleanup code (if needed)
     };
   }, []);
 

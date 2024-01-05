@@ -7,13 +7,14 @@ const cors = require('cors');
 const mime = require('mime');
 const { Pool } = require('pg');
 
+
 const pool = new Pool({
-  host: 'database-1.cbxymylid2b5.us-west-2.rds.amazonaws.com',
-  user: 'postgres',
-  password: 'g8AfiS9LHXLnoQiAnHUS',
-  database: 'postgres',
-  PORT: 5432,
-});
+    host: 'database-1.cbxymylid2b5.us-west-2.rds.amazonaws.com',
+    user: 'postgres',
+    password: '6Zvx6JHnNjtbVobCmBsc',
+    database: 'postgres',
+    PORT: 5432,
+  });
 
 app.use((req, res, next) => {
     res.header("Cross-Origin-Embedder-Policy", "require-corp");
