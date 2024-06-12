@@ -4,6 +4,7 @@
 # conn = psycopg2.connect(
 #     database="postgres", 
 #     user="postgres", 
+#     password = os.getenv('AWS_PUZZLEDB_PASSWORD'), 
 #     host="database-1.cbxymylid2b5.us-west-2.rds.amazonaws.com", 
 #     port="5432"
 # )
