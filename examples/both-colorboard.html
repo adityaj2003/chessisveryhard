@@ -15,18 +15,26 @@
     </br><br>
 <div class="board" id="board"></div>
 <div id="output"></div>
-<label for="evalDepth"> Set Evaluation Depth: </label>
 
-<input id="evalDepth" type="number" min="1" max="40" value="20"><br><br>
-    Play with computer? <br>
-    <label for="computerPlayAsWhite">As White</label>
-    <input type="checkbox" id = "computerPlayAsWhite" onchange="disableButtons()"> &nbsp &nbsp
-        <label for="computerPlayAsBlack">As Black</label>
-        <input type="checkbox" id = "computerPlayAsBlack" onchange="blackFirstMove();disableButtons()"><br><br>
-            <button id="prevPos" onclick="prevPosition()">Prev</button>
-            <button id="nextPos" onclick="nextPosition()">Next</button>
+<label for="evalDepth" style="font-weight: bold; display: block; margin-bottom: 5px;">Set Evaluation Depth:</label>
+<input id="evalDepth" type="number" min="1" max="40" value="20" style="padding: 8px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #ccc;">
+
+<p>Play with computer?</p>
+<div style="margin-bottom: 10px;">
+  <input type="checkbox" id="computerPlayAsWhite" onchange="disableButtons()" style="margin-right: 10px;">
+  <label for="computerPlayAsWhite" style="font-weight: normal; margin-right: 20px;">As White</label>
+  <input type="checkbox" id="computerPlayAsBlack" onchange="blackFirstMove();disableButtons()" style="margin-right: 10px;">
+  <label for="computerPlayAsBlack" style="font-weight: normal;">As Black</label>
+</div>
+
+<div style="margin-bottom: 20px;">
+  <button id="prevPos" onclick="prevPosition()" style="padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; background-color: #007bff; color: #fff; margin-right: 10px;">Prev</button>
+  <button id="nextPos" onclick="nextPosition()" style="padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; background-color: #007bff; color: #fff;">Next</button>
+</div>
+
 <div id="evalDiv"></div>
-<div id ="bestMove"></div>
+<div id="bestMove"></div>
+
 <!--suppress JSUnresolvedFunction -->
 <script type="module">
     import {INPUT_EVENT_TYPE, COLOR, Chessboard, MARKER_TYPE} from "../src/cm-chessboard/Chessboard.js"
