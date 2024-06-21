@@ -61,9 +61,10 @@ const HeaderLink = (props) => {
   const styles = {
     base: {
       float: 'left',
-      color: '#EA4717',
+      color: '#B18E68',
       textAlign: 'center',
       padding: '12px',
+      fontWeight: 'bold',
       textDecoration: 'none',
       fontSize: '18px',
       lineHeight: '25px',
@@ -101,9 +102,15 @@ const Header = () => {
     },
     logo: {
       float: 'left',
+      height: '80px',
+      width : '120px',  // Adjust height to match the header
+      width: 'auto',  // Maintain aspect ratio
+      display:'block',
+      margin: 0,
+      padding : 0,
       fontSize: '25px',
       fontWeight: 'bold',
-      color:'#EA4717',
+      color: '#EA4717',
     },
     headerRight: {
       float: 'right',
@@ -112,7 +119,7 @@ const Header = () => {
 
   return (
     <div style={styles.header}>
-      <a href="https://github.com/adityaj2003/chessisveryhard" className="logo" style={styles.logo}>ChessIsVeryHard</a>
+      <img href="https://github.com/adityaj2003/chessisveryhard" src='../assets/images/ChessLogo.svg' style={styles.logo}></img>
       <div className="header-right" style={styles.headerRight}>
         <HeaderLink className="active" href="both-colorboard.html">Analysis Board</HeaderLink>
         <HeaderLink href="multiplayer.html">Multiplayer</HeaderLink>
@@ -124,6 +131,7 @@ const Header = () => {
     </div>
   );
 }
+
 const root = createRoot(document.getElementById('header'))
 root.render(<Header />);
 export default Header;

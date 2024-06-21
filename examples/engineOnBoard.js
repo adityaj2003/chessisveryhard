@@ -47,8 +47,6 @@ evaler.onmessage = function(event) {
     
 }
 
-
-console.log("message sent");
 engine.postMessage("uci");
 engine.postMessage("isready");
 evaler.postMessage("uci");

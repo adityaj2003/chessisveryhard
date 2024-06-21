@@ -141,7 +141,7 @@ const PuzzlesComponent = () => {
   }, []);
 
 
-  return <div id="board" style={{ width: '50%', height: '50%' }}></div>;
+  return <div id="board" style={{ width: '40%', height: '40%' }}></div>;
 };
 
 const root = createRoot(document.getElementById('root'))
