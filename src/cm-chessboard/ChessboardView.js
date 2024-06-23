@@ -25,6 +25,7 @@ export class ChessboardView {
         this.animationRunning = false
         this.currentAnimation = undefined
         this.chessboard = chessboard
+        this.arrows = []
         this.moveInput = new ChessboardMoveInput(this,
             this.moveStartCallback.bind(this),
             this.moveDoneCallback.bind(this),
@@ -248,6 +249,14 @@ export class ChessboardView {
         }
     }
 
+    removeArrows() {
+        this.arrows.forEach(({line, arrowHead}) => {
+            Svg.removeElement(line);
+            Svg.removeElement(arrowHead);
+        });
+        this.arrows = [];
+    }
+
     // Pieces //
 
     drawPieces(squares = this.chessboard.state.squares) {
@@ -313,7 +322,51 @@ export class ChessboardView {
         )
     }
 
+    drawArrow(startPoint, endPoint, width) {
+        console.log("DRAW ARROW ")
+        console.log(startPoint)
+        console.log(endPoint)
+        const x1 = startPoint.x + this.squareWidth / 2;
+        const y1 = startPoint.y + this.squareHeight / 2;
+        const x2 = endPoint.x + this.squareWidth / 2;
+        const y2 = endPoint.y + this.squareHeight / 2;
+
+        // Calculate the distance and angle between the start and end points
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const arrowheadLength = width * 2;
+
+        // Calculate the end point of the line (start of the triangle)
+        const lineEndX = x2 - (dx / distance) * arrowheadLength;
+        const lineEndY = y2 - (dy / distance) * arrowheadLength;
+
+        // Create the line
+        const line = Svg.addElement(this.svg, "line", {
+            x1: x1,
+            y1: y1,
+            x2: lineEndX,
+            y2: lineEndY,
+            stroke: "#fac234",
+            "stroke-width": width,
+            opacity: "0.55"
+        });
+
+        // Calculate the points for the larger arrowhead
+        const arrowHeadPoints = `${x2},${y2} ${lineEndX - (dy / distance) * width},${lineEndY + (dx / distance) * width} ${lineEndX + (dy / distance) * width},${lineEndY - (dx / distance) * width}`;
+
+        const arrowHead = Svg.addElement(this.svg, "polygon", {
+            points: arrowHeadPoints,
+            fill: "#fac234",
+            opacity: "0.55"
+        });
+        this.arrows.push({line, arrowHead});
+        
+    }
+
+
     drawMarker(marker) {
+        this.removeArrows()
         const markerGroup = Svg.addElement(this.markersGroup, "g")
         markerGroup.setAttribute("data-index", marker.index)
         const point = this.squareIndexToPoint(marker.index)

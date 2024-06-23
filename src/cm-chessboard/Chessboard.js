@@ -15,7 +15,9 @@ export const COLOR = {
 export const INPUT_EVENT_TYPE = {
     moveStart: "moveStart",
     moveDone: "moveDone",
-    moveCanceled: "moveCanceled"
+    moveCanceled: "moveCanceled", 
+    arrowStart:"arrowStart",
+    arrowEnd : "arrowEnd"
 }
 export const SQUARE_SELECT_TYPE = {
     primary: "primary",
