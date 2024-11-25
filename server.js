@@ -22,7 +22,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use(cors({
-    origin: 'https://www.section.io'
+    origin: '*'
 }));
 
 let server = http.createServer(app);
