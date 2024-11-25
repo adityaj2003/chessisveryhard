@@ -43,34 +43,29 @@ for (let i = 0; i < 100; i++) {
 
 io.on('connection', function (socket) {
     var color;
-    var playerId =  Math.floor((Math.random() * 100) + 1)
-
-    console.log(playerId + ' connected');
-
+    var playerId =  Math.floor((Math.random() * 100) + 1);
     socket.on('joined', function (msg) {
-        const roomId = msg.roomID;
+        const roomID = msg.roomID;
         const playerName = msg.playerName;
         
-        if (games[roomId].players < 2) {
-            games[roomId].players++;
-            games[roomId].pid[games[roomId].players - 1] = playerId;
-            socket.join(roomId);
+        if (games[roomID].players < 2) {
+            games[roomID].players++;
+            games[roomID].pid[games[roomID].players - 1] = playerId;
+            socket.join(roomID);
         }
         else{
-            socket.emit('full', roomId)
+            socket.emit('full', roomID)
             return;
         }
         
-        console.log(games[roomId]);
-        players = games[roomId].players
+        players = games[roomID].players
 
         if (players == 1) {
             color = 'black';
         } else {
             color = 'white';
         }
-
-        socket.emit('player', { playerId, players, color, roomId, playerName})
+        socket.emit('player', { playerId, players, color, roomID, playerName})
     });
 
     socket.on('gameOver', function(msg) {
@@ -84,9 +79,9 @@ io.on('connection', function (socket) {
     });
 
     socket.on('play', function (msg) {
-        // Emit this message to the room
-        io.to(msg.roomID).emit('play', msg);
-        console.log("ready " + msg);
+        console.log(`Emitting play event ${msg})`);
+        io.to(msg).emit('play', msg);
+
     });
 
     socket.on('disconnect', function () {
@@ -94,7 +89,6 @@ io.on('connection', function (socket) {
             if (games[i].pid[0] == playerId || games[i].pid[1] == playerId)
                 games[i].players--;
         }
-        console.log(playerId + ' disconnected');
     });
 
     socket.on('getPuzzle', function () {
@@ -102,7 +96,6 @@ io.on('connection', function (socket) {
     
         pool.query(query, (err, result) => {
         if (err) {
-            console.error('Error fetching puzzle from database:', err);
             socket.emit('puzzleData', null);
             return;
         }
@@ -138,4 +131,4 @@ io.on('connection', function (socket) {
 
 
 server.listen(PORT);
-console.log('server on' + PORT);
+console.log('server on ' + PORT);

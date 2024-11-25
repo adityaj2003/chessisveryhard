@@ -48,9 +48,10 @@
                 </div>
     
 </div>
+<div class="board" id="board"></div>
 </div>
 
-<div class="board" id="board"></div>
+
 
 
 <div id="opponent"> </div> <br>
@@ -81,9 +82,11 @@
     socket.on('full', function (msg) {
         if(roomId == msg)
             window.location.assign(window.location.href+ 'full.html');
+            console.log("full")
     });
 
     socket.on('play', function (msg) {
+        console.log(msg+ " play received"); 
         if (msg == roomId) {
             play = false;
             state.innerHTML = "Game in progress"
@@ -166,13 +169,14 @@
         
         var players = msg.players;
 
-        if(players == 2){
+        if (players == 2) {
             play = false;
             socket.emit('play', msg.roomID);
             state.innerHTML = "Game in Progress"
         }
-        else
+        else {
             state.innerHTML = "Waiting for Second player";
+        }
 
         if (color === 'white') {
             var cfg = {
